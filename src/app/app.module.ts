@@ -9,6 +9,7 @@ import { environment } from "../environments/environment";
 
 import { AppComponent } from "./app.component";
 import * as fromContainers from "../containers";
+import { AppMaterialModule } from "../modules/app-material.module";
 
 // routes
 export const ROUTES: Routes = [
@@ -21,6 +22,7 @@ export const ROUTES: Routes = [
     BrowserModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFirestoreModule,
+    AppMaterialModule,
     RouterModule.forRoot(ROUTES)
   ],
   declarations: [AppComponent, fromContainers.containers],
