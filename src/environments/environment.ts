@@ -6,11 +6,11 @@
 export const environment = {
   production: false,
   firebaseConfig: {
-    apiKey: "AIzaSyDxOClCtrI2hibiH0ewvRUAtG6zWtTX37s",
-    authDomain: "ngrx-fire-fed89.firebaseapp.com",
-    databaseURL: "https://ngrx-fire-fed89.firebaseio.com",
-    projectId: "ngrx-fire-fed89",
-    storageBucket: "ngrx-fire-fed89.appspot.com",
-    messagingSenderId: "92663924686"
+    apiKey: "AIzaSyD4V0KUNbzXXdswWO8TlaDtyiSRRI21kbw",
+    authDomain: "fire-playground-1d37c.firebaseapp.com",
+    databaseURL: "https://fire-playground-1d37c.firebaseio.com",
+    projectId: "fire-playground-1d37c",
+    storageBucket: "fire-playground-1d37c.appspot.com",
+    messagingSenderId: "246498581676"
   }
 };

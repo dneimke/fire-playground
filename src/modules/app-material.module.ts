@@ -22,7 +22,8 @@ import {
   MatStepperModule,
   MatTableModule,
   MatChipsModule,
-  MatExpansionModule
+  MatExpansionModule,
+  MatTabsModule
 } from "@angular/material";
 
 import { MatListModule } from "@angular/material/list";
@@ -50,6 +51,7 @@ import { MatListModule } from "@angular/material/list";
     MatSidenavModule,
     MatSlideToggleModule,
     MatStepperModule,
+    MatTabsModule,
     MatTooltipModule,
     MatToolbarModule
   ],
@@ -74,6 +76,7 @@ import { MatListModule } from "@angular/material/list";
     MatSidenavModule,
     MatSlideToggleModule,
     MatStepperModule,
+    MatTabsModule,
     MatTableModule,
     MatTooltipModule,
     MatToolbarModule

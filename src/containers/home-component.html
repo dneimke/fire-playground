@@ -1,0 +1,33 @@
+<h2>Simple collection bind</h2>
+<p>This page simply binds the Observable result of a collection to an unordered list</p>
+<ul>
+    <li *ngFor="let item of items | async">
+        {{ item.name }}
+    </li>
+</ul>
+<mat-tab-group>
+    <mat-tab label="Component">
+        <div ngNonBindable>
+            <pre>
+export class HomeComponent {{
+    items: Observable&lt;any[]>;
+    constructor(db: AngularFirestore) {{
+    this.items = db.collection("items").valueChanges();
+    }
+}
+            </pre>
+        </div>
+
+    </mat-tab>
+    <mat-tab label="Template">
+        <div ngNonBindable>
+            <pre>
+&lt;ul>
+    &lt;li *ngFor="let item of items | async">
+        {{ item.name }}
+    &lt;/li>
+&lt;/ul> 
+     </pre>
+        </div>
+    </mat-tab>
+</mat-tab-group>
