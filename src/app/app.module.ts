@@ -4,13 +4,15 @@ import { NgModule } from "@angular/core";
 import { Routes, RouterModule } from "@angular/router";
 
 import { AngularFireModule } from "angularfire2";
-import { AngularFireDatabaseModule } from "angularfire2/database";
 import { AngularFirestoreModule } from "angularfire2/firestore";
+import { AngularFireAuthModule } from "angularfire2/auth";
 import { environment } from "../environments/environment";
 
 import { AppComponent } from "./app.component";
-import * as fromContainers from "../containers";
 import { AppMaterialModule } from "../modules/app-material.module";
+
+import * as fromServices from "../services";
+import * as fromContainers from "../containers";
 
 // routes
 export const ROUTES: Routes = [
@@ -24,11 +26,12 @@ export const ROUTES: Routes = [
     BrowserAnimationsModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFirestoreModule,
+    AngularFireAuthModule,
     AppMaterialModule,
     RouterModule.forRoot(ROUTES)
   ],
   declarations: [AppComponent, fromContainers.containers],
-  providers: [],
+  providers: [fromServices.services],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
