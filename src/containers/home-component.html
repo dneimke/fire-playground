@@ -12,7 +12,7 @@
 export class HomeComponent {{
     items: Observable&lt;any[]>;
     constructor(db: AngularFirestore) {{
-    this.items = db.collection("items").valueChanges();
+        this.items = db.collection("items").valueChanges();
     }
 }
             </pre>

@@ -17,7 +17,8 @@ import * as fromContainers from "../containers";
 // routes
 export const ROUTES: Routes = [
   { path: "", pathMatch: "full", redirectTo: "home" },
-  { path: "home", component: fromContainers.HomeComponent }
+  { path: "home", component: fromContainers.HomeComponent },
+  { path: "nested", component: fromContainers.NestedCollectionsComponent }
 ];
 
 @NgModule({

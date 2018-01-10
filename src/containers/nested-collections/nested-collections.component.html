@@ -1,0 +1,16 @@
+<div>
+    Hello {{(user$ | async).name}}!
+</div>
+
+<div class="container">
+    <h3>Carts</h3>
+    <p class="bg-info" style="padding: 15px; width: 50%" *ngIf="!(items$ | async)">There are no items, click add to create one!</p>
+
+    <ul *ngIf="items$ | async">
+        <li *ngFor="let item of items$">
+            {{item.name}}
+        </li>
+    </ul>
+
+    <button mat-raised-button color="primary" (click)="onAddCart()">Add</button>
+</div>

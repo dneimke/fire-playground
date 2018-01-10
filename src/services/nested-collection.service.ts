@@ -2,16 +2,15 @@ import { Injectable } from "@angular/core";
 import { Observable } from "rxjs/Observable";
 import { Subject } from "rxjs/Subject";
 import { AngularFirestore } from "angularfire2/firestore";
-import { AngularFireAuth } from "angularfire2/auth";
-import { User } from "@firebase/auth-types";
-import { Cart } from "../models";
+import { Cart, User } from "../models";
 import { of } from "rxjs/observable/of";
 import { fromPromise } from "rxjs/observable/fromPromise";
-import { ICollectionService } from ".";
+import { ICollectionService } from "./ICollection.service";
+import { UserService } from "./user.service";
 
 @Injectable()
 export class NestedCollectionService implements ICollectionService<Cart> {
-  constructor(private db: AngularFirestore, private auth: AngularFireAuth) {}
+  constructor(private db: AngularFirestore, private userService: UserService) {}
 
   find(id: string): Observable<Cart> {
     const items$ = new Subject<string>();
@@ -26,8 +25,8 @@ export class NestedCollectionService implements ICollectionService<Cart> {
       return null;
     }) as Observable<Cart>;
 
-    this.auth.authState.subscribe((user: User) => {
-      items$.next(user.uid);
+    this.userService.getUser().subscribe((user: User) => {
+      items$.next(user.id);
     });
 
     return query$;
@@ -41,8 +40,8 @@ export class NestedCollectionService implements ICollectionService<Cart> {
       return this.db.collection(path).valueChanges();
     }) as Observable<Cart[]>;
 
-    this.auth.authState.subscribe((user: User) => {
-      items$.next(user.uid);
+    this.userService.getUser().subscribe((user: User) => {
+      items$.next(user.id);
     });
 
     return query$;
@@ -58,8 +57,8 @@ export class NestedCollectionService implements ICollectionService<Cart> {
       return fromPromise(collection.add(cart));
     }) as Observable<Cart>;
 
-    this.auth.authState.subscribe((user: User) => {
-      items$.next(user.uid);
+    this.userService.getUser().subscribe((user: User) => {
+      items$.next(user.id);
     });
 
     return query$;
@@ -79,8 +78,8 @@ export class NestedCollectionService implements ICollectionService<Cart> {
       return null;
     }) as Observable<Cart>;
 
-    this.auth.authState.subscribe((user: User) => {
-      items$.next(user.uid);
+    this.userService.getUser().subscribe((user: User) => {
+      items$.next(user.id);
     });
 
     return query$;
@@ -100,8 +99,8 @@ export class NestedCollectionService implements ICollectionService<Cart> {
       return of(false);
     }) as Observable<boolean>;
 
-    this.auth.authState.subscribe((user: User) => {
-      items$.next(user.uid);
+    this.userService.getUser().subscribe((user: User) => {
+      items$.next(user.id);
     });
 
     return query$;
