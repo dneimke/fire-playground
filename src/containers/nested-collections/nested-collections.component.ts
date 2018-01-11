@@ -9,7 +9,7 @@ import { Cart, User } from "../../models";
   templateUrl: "./nested-collections.component.html"
 })
 export class NestedCollectionsComponent implements OnInit {
-  items$: Observable<Cart[]>;
+  carts$: Observable<Cart[]>;
   user$: Observable<User>;
   constructor(
     private collectionService: NestedCollectionService,
@@ -18,14 +18,14 @@ export class NestedCollectionsComponent implements OnInit {
 
   ngOnInit(): void {
     this.user$ = this.userService.getUser();
-    this.items$ = this.collectionService.findAll();
+    this.carts$ = this.collectionService.findAll();
+
+    // this.user$.subscribe(e => console.warn(e));
   }
 
   onAddCart() {
     const name = prompt("Enter a name for your cart.");
-
     const cart = { name } as Cart;
-
     this.collectionService.add(cart);
   }
 }

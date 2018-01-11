@@ -1,15 +1,17 @@
-<div>
-    Hello {{(user$ | async).name}}!
+<div *ngIf="(user$ | async)">
+    Hello {{user$.name}}!
 </div>
 
 <div class="container">
     <h3>Carts</h3>
-    <p class="bg-info" style="padding: 15px; width: 50%" *ngIf="!(items$ | async)">There are no items, click add to create one!</p>
+    <p class="bg-info" style="padding: 15px; width: 50%" *ngIf="!(carts$ | async)">
+        There are no items, click add to create one!
+    </p>
 
-    <ul *ngIf="items$ | async">
-        <li *ngFor="let item of items$">
+    <ul *ngIf="(carts$ | async)">
+        <!-- <li *ngFor="let item of carts$">
             {{item.name}}
-        </li>
+        </li> -->
     </ul>
 
     <button mat-raised-button color="primary" (click)="onAddCart()">Add</button>

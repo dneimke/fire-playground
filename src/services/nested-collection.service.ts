@@ -10,14 +10,14 @@ import { UserService } from "./user.service";
 
 @Injectable()
 export class NestedCollectionService implements ICollectionService<Cart> {
-  constructor(private db: AngularFirestore, private userService: UserService) {}
+  constructor(private afs: AngularFirestore, private userService: UserService) {}
 
   find(id: string): Observable<Cart> {
     const items$ = new Subject<string>();
 
     const query$ = items$.switchMap((userId: string) => {
-      const path = `users/${userId}/carts/${id}`;
-      const docRef = this.db.doc<Cart>(path);
+      const path = `accounts/${userId}/carts/${id}`;
+      const docRef = this.afs.doc<Cart>(path);
       if (docRef) {
         return docRef.ref;
       }
@@ -37,7 +37,7 @@ export class NestedCollectionService implements ICollectionService<Cart> {
 
     const query$ = items$.switchMap(userId => {
       const path = `users/${userId}/carts`;
-      return this.db.collection(path).valueChanges();
+      return this.afs.collection(path).valueChanges();
     }) as Observable<Cart[]>;
 
     this.userService.getUser().subscribe((user: User) => {
@@ -50,14 +50,23 @@ export class NestedCollectionService implements ICollectionService<Cart> {
   add(cart: Cart): Observable<Cart> {
     const items$ = new Subject<string>();
 
-    const query$ = items$.switchMap(userId => {
-      const path = `users/${userId}/carts`;
-      const collection = this.db.collection<Cart>(path);
+    console.info("a");
 
-      return fromPromise(collection.add(cart));
+    const query$ = items$.switchMap(userId => {
+      console.info("b");
+      const path = `users/${userId}/carts`;
+      console.info(path);
+      const coll$ = this.afs.collection<Cart>(path);
+      return coll$
+        .doc(cart.id)
+        .set(cart)
+        .then(() => {
+          return cart;
+        });
     }) as Observable<Cart>;
 
     this.userService.getUser().subscribe((user: User) => {
+      console.info("c");
       items$.next(user.id);
     });
 
@@ -69,7 +78,7 @@ export class NestedCollectionService implements ICollectionService<Cart> {
 
     const query$ = items$.switchMap(userId => {
       const path = `users/${userId}/carts/${cart.id}`;
-      const docRef = this.db.doc<Cart>(path);
+      const docRef = this.afs.doc<Cart>(path);
       if (docRef) {
         docRef.set(cart);
         return docRef.ref;
@@ -90,7 +99,7 @@ export class NestedCollectionService implements ICollectionService<Cart> {
 
     const query$ = items$.switchMap(userId => {
       const path = `users/${userId}/carts/${cartId}`;
-      const docRef = this.db.doc<Cart>(path);
+      const docRef = this.afs.doc<Cart>(path);
       if (docRef) {
         docRef.delete();
         return of(true);
