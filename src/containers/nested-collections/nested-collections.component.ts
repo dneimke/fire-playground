@@ -11,13 +11,12 @@ import { Cart, User } from "../../models";
 export class NestedCollectionsComponent implements OnInit {
   carts$: Observable<Cart[]>;
   user: User;
-  constructor(
-    private collectionService: NestedCollectionService,
-    private userService: UserService
-  ) {}
+  selectedCart: Cart;
+
+  constructor(private cartService: NestedCollectionService, private userService: UserService) {}
 
   ngOnInit(): void {
-    this.carts$ = this.collectionService.findAll();
+    this.carts$ = this.cartService.findAll();
 
     this.userService.getUser().subscribe(e => (this.user = e));
   }
@@ -25,6 +24,25 @@ export class NestedCollectionsComponent implements OnInit {
   onAddCart() {
     const name = prompt("Enter a name for your cart.");
     const cart = { name } as Cart;
-    this.collectionService.add(cart);
+    this.cartService.add(cart);
+  }
+
+  onSelect(cartId: string) {
+    this.cartService.find(cartId).subscribe(c => {
+      console.info("selected", c);
+      this.selectedCart = c;
+    });
+  }
+
+  onEdit(cart: Cart) {
+    // this.cartService.find(cartId).subscribe(c => (this.selectedCart = c));
+  }
+
+  onDelete(cart: Cart) {
+    console.info(cart);
+    const confirmed = confirm("Are you sure you want to delete this record?");
+    if (confirmed) {
+      this.cartService.delete(cart.id).pipe(() => (this.selectedCart = undefined));
+    }
   }
 }

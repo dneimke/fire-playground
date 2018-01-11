@@ -19,10 +19,10 @@ export class UserService {
   getUser(): Observable<User> {
     const result$ = new Subject<User>();
 
-    const user = { id: "1", name: "Test User" } as User;
-    let path = `${this.path}/${user.id}`;
+    const userId = "1";
+    let path = `${this.path}/${userId}`;
 
-    this.ensureTestUser(user).then(() => {
+    this.ensureTestUser(userId).then(() => {
       const data = this.af
         .doc(path)
         .snapshotChanges()
@@ -34,26 +34,25 @@ export class UserService {
         console.info("customer changed", d);
         result$.next(d.data());
       });
-
-      // .snapshotChanges()
-      // .map(e => result$.next(e.payload.ref));
     });
 
     return result$.asObservable();
   }
 
-  ensureTestUser(user: User): Promise<{}> {
+  ensureTestUser(userId: string): Promise<{}> {
     const result$ = new Subject<{}>();
 
+    const testUser = { id: userId, name: "Test User" };
+
     this.af
-      .doc<User>(`${this.path}/${user.id}`)
+      .doc<User>(`${this.path}/${testUser.id}`)
       .snapshotChanges()
       .subscribe((e: DocumentChangeAction) => {
         if (!e.payload.exists) {
           this.af
             .collection(this.path)
-            .doc(user.id)
-            .set(user)
+            .doc(testUser.id)
+            .set(testUser)
             .then(() => result$.complete());
         } else {
           result$.complete();

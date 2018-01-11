@@ -8,11 +8,29 @@
         There are no items, click add to create one!
     </p>
 
-    <ul>
-        <li *ngFor="let item of carts$ | async">
-            {{item.name}}
-        </li>
-    </ul>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <ul class='list-unstyled'>
+                    <li *ngFor="let item of carts$ | async">
+                        <a (click)="onSelect(item.id)">
+                            <span class="badge">{{item.name}}</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-8">
+                <div class='card' *ngIf='selectedCart'>
+                    <h2>Selected Cart</h2>
+                    <p>{{(selectedCart)?.name}}</p>
+                    <button mat-raised-button color="primary" (click)="onEdit(selectedCart)">Edit</button>
+                    <button mat-raised-button color="warn" (click)="onDelete(selectedCart)">Delete</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
 
     <button mat-raised-button color="primary" (click)="onAddCart()" *ngIf="user">Add</button>
 </div>
