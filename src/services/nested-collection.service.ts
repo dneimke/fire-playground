@@ -29,10 +29,6 @@ export class NestedCollectionService implements ICollectionService<Cart> {
       data.subscribe((d: DocumentSnapshot) => {
         if (d.exists) {
           const cart = d.data() as Cart;
-          const id = d.id;
-          console.log("d: ", d);
-          console.log("data: ", d.data());
-
           items$.next({ id, name: cart.name, userId: user.id, itemCount: 0, itemValue: 0 });
         }
       });
