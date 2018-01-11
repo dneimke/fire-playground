@@ -10,17 +10,16 @@ import { Cart, User } from "../../models";
 })
 export class NestedCollectionsComponent implements OnInit {
   carts$: Observable<Cart[]>;
-  user$: Observable<User>;
+  user: User;
   constructor(
     private collectionService: NestedCollectionService,
     private userService: UserService
   ) {}
 
   ngOnInit(): void {
-    this.user$ = this.userService.getUser();
     this.carts$ = this.collectionService.findAll();
 
-    // this.user$.subscribe(e => console.warn(e));
+    this.userService.getUser().subscribe(e => (this.user = e));
   }
 
   onAddCart() {

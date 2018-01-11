@@ -36,8 +36,17 @@ export class NestedCollectionService implements ICollectionService<Cart> {
     const items$ = new Subject<string>();
 
     const query$ = items$.switchMap(userId => {
-      const path = `users/${userId}/carts`;
-      return this.afs.collection(path).valueChanges();
+      const path = `accounts/${userId}/carts`;
+      return this.afs
+        .collection(path)
+        .snapshotChanges()
+        .map(actions => {
+          return actions.map(a => {
+            const data = a.payload.doc.data() as Cart;
+            const id = a.payload.doc.id;
+            return { id, ...data };
+          });
+        });
     }) as Observable<Cart[]>;
 
     this.userService.getUser().subscribe((user: User) => {
@@ -48,36 +57,26 @@ export class NestedCollectionService implements ICollectionService<Cart> {
   }
 
   add(cart: Cart): Observable<Cart> {
-    const items$ = new Subject<string>();
-
-    console.info("a");
-
-    const query$ = items$.switchMap(userId => {
-      console.info("b");
-      const path = `users/${userId}/carts`;
-      console.info(path);
-      const coll$ = this.afs.collection<Cart>(path);
-      return coll$
-        .doc(cart.id)
-        .set(cart)
-        .then(() => {
-          return cart;
-        });
-    }) as Observable<Cart>;
+    const subject$ = new Subject<Cart>();
 
     this.userService.getUser().subscribe((user: User) => {
-      console.info("c");
-      items$.next(user.id);
+      const path = `accounts/${user.id}/carts`;
+      console.info(path);
+
+      const coll$ = this.afs.collection<Cart>(path);
+      coll$.add(cart).then(() => {
+        subject$.next(cart);
+      });
     });
 
-    return query$;
+    return subject$.asObservable();
   }
 
   update(cart: Cart): Observable<Cart> {
     const items$ = new Subject<string>();
 
     const query$ = items$.switchMap(userId => {
-      const path = `users/${userId}/carts/${cart.id}`;
+      const path = `accounts/${userId}/carts/${cart.id}`;
       const docRef = this.afs.doc<Cart>(path);
       if (docRef) {
         docRef.set(cart);
@@ -98,7 +97,7 @@ export class NestedCollectionService implements ICollectionService<Cart> {
     const items$ = new Subject<string>();
 
     const query$ = items$.switchMap(userId => {
-      const path = `users/${userId}/carts/${cartId}`;
+      const path = `accounts/${userId}/carts/${cartId}`;
       const docRef = this.afs.doc<Cart>(path);
       if (docRef) {
         docRef.delete();

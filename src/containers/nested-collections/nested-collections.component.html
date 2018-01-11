@@ -1,5 +1,5 @@
-<div *ngIf="(user$ | async)">
-    Hello {{user$.name}}!
+<div *ngIf="user">
+    Hello {{user.name}}!
 </div>
 
 <div class="container">
@@ -8,11 +8,11 @@
         There are no items, click add to create one!
     </p>
 
-    <ul *ngIf="(carts$ | async)">
-        <!-- <li *ngFor="let item of carts$">
+    <ul>
+        <li *ngFor="let item of carts$ | async">
             {{item.name}}
-        </li> -->
+        </li>
     </ul>
 
-    <button mat-raised-button color="primary" (click)="onAddCart()">Add</button>
+    <button mat-raised-button color="primary" (click)="onAddCart()" *ngIf="user">Add</button>
 </div>

@@ -17,18 +17,32 @@ export class UserService {
   constructor(private af: AngularFirestore) {}
 
   getUser(): Observable<User> {
+    const result$ = new Subject<User>();
+
     const user = { id: "1", name: "Test User" } as User;
     let path = `${this.path}/${user.id}`;
 
-    return this.ensureTestUser(user).switchMap(() => {
-      return this.af
-        .doc<User>(path)
+    this.ensureTestUser(user).then(() => {
+      const data = this.af
+        .doc(path)
         .snapshotChanges()
-        .map(e => e.payload.data());
+        .map(e => {
+          return e.payload;
+        });
+
+      data.subscribe(d => {
+        console.info("customer changed", d);
+        result$.next(d.data());
+      });
+
+      // .snapshotChanges()
+      // .map(e => result$.next(e.payload.ref));
     });
+
+    return result$.asObservable();
   }
 
-  ensureTestUser(user: User): Observable<{}> {
+  ensureTestUser(user: User): Promise<{}> {
     const result$ = new Subject<{}>();
 
     this.af
@@ -40,22 +54,12 @@ export class UserService {
             .collection(this.path)
             .doc(user.id)
             .set(user)
-            .then(() => result$.next());
+            .then(() => result$.complete());
         } else {
-          result$.next();
+          result$.complete();
         }
       });
-    // .pipe(result => {
-    //   if (!result.payload.docSnap().exists) {
-    //     coll$
-    //       .doc(user.id)
-    //       .set(user)
-    //       .then(() => result$.next());
-    //   } else {
-    //     result$.next();
-    //   }
-    // });
 
-    return result$.asObservable();
+    return result$.toPromise();
   }
 }
