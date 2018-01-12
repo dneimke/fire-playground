@@ -25,14 +25,13 @@ export class NestedCollectionService implements ICollectionService<Cart> {
   find(id: string): Observable<Cart> {
     if (!this.userId) return;
 
-    console.info(`find()...`);
-
     const path = `accounts/${this.userId}/carts/${id}`;
+    console.info(`find: `, path);
+
     return this.afs
       .doc(path)
       .snapshotChanges()
       .map((action: DocumentChangeAction) => {
-        console.info("fetch", action);
         if (action.payload.exists) {
           const data = action.payload.data() as Cart;
           const id = action.payload.id;
@@ -45,17 +44,15 @@ export class NestedCollectionService implements ICollectionService<Cart> {
   findAll(): Observable<Cart[]> {
     if (!this.userId) return;
 
-    console.info(`cart:findAll`, this.userId);
-
     const path = `accounts/${this.userId}/carts`;
+    console.info(`findAll`, path);
+
     return this.afs
       .collection<Cart>(path)
       .snapshotChanges()
       .map(actions => {
         return actions
           .map((action: DocumentChangeAction) => {
-            console.info("check", action.payload, action.payload.doc.exists);
-
             if (action.payload.doc.exists) {
               const data = action.payload.doc.data() as Cart;
               const id = action.payload.doc.id;
@@ -69,13 +66,14 @@ export class NestedCollectionService implements ICollectionService<Cart> {
   add(cart: Cart): Observable<Cart> {
     if (!this.userId) return;
 
-    console.info(`add()...`);
-
     const path = `accounts/${this.userId}/carts`;
+    console.info(`adding: `, path, cart);
+
     this.afs
       .collection<Cart>(path)
       .add(cart)
       .then(() => {
+        console.info(`added: `, cart);
         return of(cart);
       });
   }
@@ -86,9 +84,9 @@ export class NestedCollectionService implements ICollectionService<Cart> {
     const path = `accounts/${this.userId}/carts/${cart.id}`;
     const docRef = this.afs.doc<Cart>(path);
     if (docRef) {
-      console.info(`update()...`, cart);
+      console.info(`updating: `, docRef, cart);
       docRef.set(cart);
-      return of(docRef.ref);
+      return of(cart);
     }
 
     return of(null);
@@ -99,7 +97,7 @@ export class NestedCollectionService implements ICollectionService<Cart> {
 
     if (!this.userId) return of(false);
 
-    console.info(`delete()...`, cartId);
+    console.info(`deleting: `, cartId);
 
     const path = `accounts/${this.userId}/carts/${cartId}`;
     const docRef = this.afs
