@@ -1,8 +1,10 @@
 import { Component, OnInit } from "@angular/core";
 import { AngularFirestore } from "angularfire2/firestore";
 import { Observable } from "rxjs/Observable";
-import { NestedCollectionService, UserService } from "../../services";
-import { Cart, User } from "../../models";
+import { Cart } from "../../models";
+import { NestedCollectionService } from "../../services";
+import { User } from "@firebase/auth-types";
+import { AngularFireAuth } from "angularfire2/auth";
 
 @Component({
   selector: "home",
@@ -10,15 +12,13 @@ import { Cart, User } from "../../models";
 })
 export class NestedCollectionsComponent implements OnInit {
   carts$: Observable<Cart[]>;
-  user: User;
+  user$: Observable<User>;
   selectedCart: Cart;
 
-  constructor(private cartService: NestedCollectionService, private userService: UserService) {}
+  constructor(private cartService: NestedCollectionService, private authService: AngularFireAuth) {}
 
   ngOnInit(): void {
     this.carts$ = this.cartService.findAll();
-
-    this.userService.getUser().subscribe(e => (this.user = e));
   }
 
   onAddCart() {
@@ -35,7 +35,9 @@ export class NestedCollectionsComponent implements OnInit {
   }
 
   onEdit(cart: Cart) {
-    // this.cartService.find(cartId).subscribe(c => (this.selectedCart = c));
+    const name = prompt("Update the name of your cart.", cart.name);
+    const updatedCart = { name, ...cart } as Cart;
+    this.cartService.update(updatedCart);
   }
 
   onDelete(cart: Cart) {
