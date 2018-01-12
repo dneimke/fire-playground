@@ -5,6 +5,7 @@ import { Cart } from "../../models";
 import { NestedCollectionService } from "../../services";
 import { User } from "@firebase/auth-types";
 import { AngularFireAuth } from "angularfire2/auth";
+import { of } from "rxjs/observable/of";
 
 @Component({
   selector: "home",
@@ -18,7 +19,11 @@ export class NestedCollectionsComponent implements OnInit {
   constructor(private cartService: NestedCollectionService, private authService: AngularFireAuth) {}
 
   ngOnInit(): void {
-    this.carts$ = this.cartService.findAll();
+    this.authService.authState.subscribe(user => {
+      if (user) {
+        this.carts$ = this.cartService.findAll();
+      }
+    });
   }
 
   onAddCart() {
@@ -36,12 +41,14 @@ export class NestedCollectionsComponent implements OnInit {
 
   onEdit(cart: Cart) {
     const name = prompt("Update the name of your cart.", cart.name);
-    const updatedCart = { name, ...cart } as Cart;
-    this.cartService.update(updatedCart);
+    const updatedCart = { ...cart, name } as Cart;
+    this.cartService.update(updatedCart).subscribe(() => {
+      this.selectedCart = undefined;
+    });
   }
 
   onDelete(cart: Cart) {
-    console.info(cart);
+    console.info("onDelete", cart);
     const confirmed = confirm("Are you sure you want to delete this record?");
     if (confirmed) {
       this.cartService.delete(cart.id).pipe(() => (this.selectedCart = undefined));
