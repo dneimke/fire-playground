@@ -66,20 +66,15 @@ export class NestedCollectionService implements ICollectionService<Cart> {
   }
 
   add(cart: Cart): void {
-    // Observable<Cart> {
     if (!this.userId) return;
 
     const path = `accounts/${this.userId}/carts`;
     console.info(`adding: `, path, cart);
 
     this.afs.collection<Cart>(path).add(cart);
-    // .then(() => {
-    //   console.info(`added: `, cart);
-    //   return of(cart);
-    // });
   }
 
-  update(cart: Cart): Observable<Cart> {
+  update(cart: Cart) {
     if (!this.userId) return of(null);
 
     const path = `accounts/${this.userId}/carts/${cart.id}`;
@@ -87,25 +82,14 @@ export class NestedCollectionService implements ICollectionService<Cart> {
     if (docRef) {
       console.info(`updating: `, docRef, cart);
       docRef.set(cart);
-      // return of(cart);
     }
-
-    // return of(null);
   }
 
-  delete(cartId: string): Observable<boolean> {
-    // const subject = new Subject<boolean>();
-
-    if (!this.userId) return of(false);
+  delete(cartId: string): void {
+    if (!this.userId) return;
 
     const path = `accounts/${this.userId}/carts/${cartId}`;
     console.info(`deleting: `, path);
     const docRef = this.afs.doc<Cart>(path).delete();
-    //   .then(() => {
-    //     return subject.next(true);
-    //   })
-    //   .catch(() => subject.next(false));
-
-    // return subject.asObservable();
   }
 }

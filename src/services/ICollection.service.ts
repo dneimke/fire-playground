@@ -5,9 +5,9 @@ export interface ICollectionService<T> {
 
   findAll(): Observable<T[]>;
 
-  add(item: T); // : Observable<T>;
+  add(item: T): void;
 
-  update(item: T); // : Observable<T>;
+  update(item: T): void;
 
-  delete(id: string); // : Observable<boolean>;
+  delete(id: string): void;
 }
