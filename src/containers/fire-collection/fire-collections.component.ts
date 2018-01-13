@@ -1,22 +1,16 @@
 import { Component, OnInit } from "@angular/core";
-import {
-  AngularFirestore,
-  AngularFirestoreCollection,
-  AngularFirestoreDocument
-} from "angularfire2/firestore";
 import { Observable } from "rxjs/Observable";
 import { Cart } from "../../models";
 import { FireCollectionService } from "../../services";
 import { User } from "@firebase/auth-types";
 import { AngularFireAuth } from "angularfire2/auth";
-import { of } from "rxjs/observable/of";
 
 @Component({
   selector: "fire-collection",
   templateUrl: "./fire-collections.component.html"
 })
 export class FireCollectionsComponent implements OnInit {
-  carts$: Observable<Cart[]>;
+  carts: Cart[];
   selectedCart: Cart;
   userId: string;
 
@@ -25,9 +19,10 @@ export class FireCollectionsComponent implements OnInit {
   ngOnInit(): void {
     this.authService.authState.subscribe(user => {
       if (user) {
-        console.log(user.uid);
         this.userId = user.uid;
-        this.carts$ = this.cartService.findByUser(user.uid);
+        this.cartService.findByUser(user.uid).subscribe(carts => {
+          this.carts = carts;
+        });
       }
     });
   }
@@ -40,10 +35,8 @@ export class FireCollectionsComponent implements OnInit {
     }
   }
 
-  onSelect(cartId: string) {
-    this.cartService.find(cartId).subscribe(c => {
-      this.selectedCart = c;
-    });
+  onSelect(cart: Cart) {
+    this.selectedCart = cart;
   }
 
   onEdit(cart: Cart) {
@@ -52,6 +45,7 @@ export class FireCollectionsComponent implements OnInit {
     if (name && name.length > 0) {
       const updatedCart = { ...cart, name } as Cart;
       this.cartService.update(updatedCart);
+      this.selectedCart = undefined;
     }
   }
 
@@ -60,6 +54,7 @@ export class FireCollectionsComponent implements OnInit {
     const confirmed = confirm("Are you sure you want to delete this record?");
     if (confirmed) {
       this.cartService.delete(cart.id);
+      this.selectedCart = undefined;
     }
   }
 }

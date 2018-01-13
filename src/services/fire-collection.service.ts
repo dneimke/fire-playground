@@ -14,6 +14,11 @@ import { Subject } from "rxjs/Subject";
 
 @Injectable()
 export class FireCollectionService implements ICollectionService<Cart> {
+  itemsCollection: AngularFirestoreCollection<Cart>;
+  items: Observable<Cart[]>;
+  itemDoc: AngularFirestoreDocument<Cart>;
+  private userId: string;
+
   constructor(private afs: AngularFirestore) {}
 
   find(id: string): Observable<Cart> {
@@ -33,50 +38,32 @@ export class FireCollectionService implements ICollectionService<Cart> {
   }
 
   findByUser(userId: string): Observable<Cart[]> {
-    const path = `carts`;
-    console.info(`findByUser`, path);
+    this.userId = userId;
+    this.itemsCollection = this.afs.collection("carts", ref => ref.orderBy("name", "asc"));
 
-    return this.afs
-      .collection<Cart>(path, ref => ref.where("userId", "==", userId))
-      .snapshotChanges()
-      .map((actions: DocumentChangeAction[]) => {
-        return actions.map((action: DocumentChangeAction) => {
-          if (action.payload.doc.exists) {
-            const data = action.payload.doc.data() as Cart;
-            const id = action.payload.doc.id;
-            return { id, ...data };
-          } else {
-            console.info("skipping: ", action.payload.doc);
-          }
-        });
+    return (this.items = this.itemsCollection.snapshotChanges().map(changes => {
+      return changes.map(a => {
+        const data = a.payload.doc.data() as Cart;
+        data.id = a.payload.doc.id;
+        return data;
       });
+    }));
   }
 
   add(cart: Cart): void {
-    const path = `carts`;
-    console.info(`adding: `, path, cart);
-
-    this.afs
-      .collection<Cart>(path)
-      .add(cart)
-      .then(ref => {
-        const newItem = { id: ref.id, ...cart };
-        ref.set(newItem);
-      });
+    this.itemsCollection.add(cart).then(ref => {
+      const newItem = { id: ref.id, ...cart };
+      ref.set(newItem);
+    });
   }
 
   update(cart: Cart) {
-    const path = `carts/${cart.id}`;
-    const docRef = this.afs.doc<Cart>(path);
-    if (docRef) {
-      console.info(`updating: `, docRef, cart);
-      docRef.set(cart);
-    }
+    const docRef = this.afs.doc<Cart>(`carts/${cart.id}`);
+    docRef.update(cart);
   }
 
   delete(cartId: string): void {
-    const path = `carts/${cartId}`;
-    console.info(`deleting: `, path);
-    const docRef = this.afs.doc<Cart>(path).delete();
+    const docRef = this.afs.doc<Cart>(`carts/${cartId}`);
+    docRef.delete();
   }
 }
