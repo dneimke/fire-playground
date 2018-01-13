@@ -42,16 +42,17 @@ export class NestedCollectionsComponent implements OnInit {
   onEdit(cart: Cart) {
     const name = prompt("Update the name of your cart.", cart.name);
     const updatedCart = { ...cart, name } as Cart;
-    this.cartService.update(updatedCart).subscribe(() => {
-      this.selectedCart = undefined;
-    });
+    this.cartService.update(updatedCart);
+    // .subscribe(() => {
+    //   this.selectedCart = undefined;
+    // });
   }
 
   onDelete(cart: Cart) {
     console.info("onDelete", cart);
     const confirmed = confirm("Are you sure you want to delete this record?");
     if (confirmed) {
-      this.cartService.delete(cart.id).pipe(() => (this.selectedCart = undefined));
+      this.cartService.delete(cart.id); // .pipe(() => (this.selectedCart = undefined));
     }
   }
 }

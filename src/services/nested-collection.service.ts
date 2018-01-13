@@ -57,25 +57,26 @@ export class NestedCollectionService implements ICollectionService<Cart> {
               const data = action.payload.doc.data() as Cart;
               const id = action.payload.doc.id;
               return { id, ...data };
+            } else {
+              console.info("skipping: ", action.payload.doc);
             }
           })
           .filter(e => e !== null);
       });
   }
 
-  add(cart: Cart): Observable<Cart> {
+  add(cart: Cart): void {
+    // Observable<Cart> {
     if (!this.userId) return;
 
     const path = `accounts/${this.userId}/carts`;
     console.info(`adding: `, path, cart);
 
-    this.afs
-      .collection<Cart>(path)
-      .add(cart)
-      .then(() => {
-        console.info(`added: `, cart);
-        return of(cart);
-      });
+    this.afs.collection<Cart>(path).add(cart);
+    // .then(() => {
+    //   console.info(`added: `, cart);
+    //   return of(cart);
+    // });
   }
 
   update(cart: Cart): Observable<Cart> {
@@ -86,28 +87,25 @@ export class NestedCollectionService implements ICollectionService<Cart> {
     if (docRef) {
       console.info(`updating: `, docRef, cart);
       docRef.set(cart);
-      return of(cart);
+      // return of(cart);
     }
 
-    return of(null);
+    // return of(null);
   }
 
   delete(cartId: string): Observable<boolean> {
-    const subject = new Subject<boolean>();
+    // const subject = new Subject<boolean>();
 
     if (!this.userId) return of(false);
 
-    console.info(`deleting: `, cartId);
-
     const path = `accounts/${this.userId}/carts/${cartId}`;
-    const docRef = this.afs
-      .doc<Cart>(path)
-      .delete()
-      .then(() => {
-        return subject.next(true);
-      })
-      .catch(() => subject.next(false));
+    console.info(`deleting: `, path);
+    const docRef = this.afs.doc<Cart>(path).delete();
+    //   .then(() => {
+    //     return subject.next(true);
+    //   })
+    //   .catch(() => subject.next(false));
 
-    return subject.asObservable();
+    // return subject.asObservable();
   }
 }
