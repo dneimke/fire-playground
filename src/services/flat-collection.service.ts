@@ -1,71 +1,91 @@
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs/Observable";
-import { Subject } from "rxjs/Subject";
-import { AngularFirestore, AngularFirestoreCollection } from "angularfire2/firestore";
+import { AngularFirestore, DocumentChangeAction } from "angularfire2/firestore";
+import { Cart, User } from "../models";
+import { of } from "rxjs/observable/of";
+import { ICollectionService } from "./ICollection.service";
 import { AngularFireAuth } from "angularfire2/auth";
-import { User } from "@firebase/auth-types";
-import { Cart } from "../models";
-import { ICollectionService } from ".";
-import { fromPromise } from "rxjs/observable/fromPromise";
+import { Subject } from "rxjs/Subject";
 
 @Injectable()
 export class FlatCollectionService implements ICollectionService<Cart> {
-  path: string = "carts";
-  items$: AngularFirestoreCollection<Cart>;
-  constructor(private db: AngularFirestore, private auth: AngularFireAuth) {
-    this.items$ = db.collection(this.path);
+  userId: string;
+  constructor(private afs: AngularFirestore, private afAuth: AngularFireAuth) {
+    console.info(`ctor...`);
+    afAuth.authState.subscribe(user => {
+      if (user) {
+        this.userId = user.uid;
+        console.info(`we have a user...`);
+      }
+    });
   }
 
   find(id: string): Observable<Cart> {
-    return this.items$.doc(id).ref;
+    if (!this.userId) return;
+
+    const path = `carts/${this.userId}/carts/${id}`;
+    console.info(`find: `, path);
+
+    return this.afs
+      .doc(path)
+      .snapshotChanges()
+      .map((action: DocumentChangeAction) => {
+        if (action.payload.exists) {
+          const data = action.payload.data() as Cart;
+          const id = action.payload.id;
+          return { id, ...data };
+        }
+      })
+      .filter(e => e !== null);
   }
 
-  findAll(): Observable<Cart[]> {
-    const observer$ = new Subject<string>();
+  findByUser(userId: string): Observable<Cart[]> {
+    const path = `accounts/${userId}/carts`;
+    console.info(`findAll`, path);
 
-    const query$ = observer$.switchMap(userId => {
-      return null;
-    }) as Observable<Cart[]>;
-
-    this.auth.authState.subscribe((user: User) => {
-      observer$.next(user.uid);
-    });
-
-    return query$;
+    return this.afs
+      .collection<Cart>(path)
+      .snapshotChanges()
+      .map(actions => {
+        return actions
+          .map((action: DocumentChangeAction) => {
+            if (action.payload.doc.exists) {
+              const data = action.payload.doc.data() as Cart;
+              const id = action.payload.doc.id;
+              return { id, ...data };
+            } else {
+              console.info("skipping: ", action.payload.doc);
+            }
+          })
+          .filter(e => e !== null);
+      });
   }
 
-  add(cart: Cart): Observable<Cart> {
-    const observer = new Subject<Cart>();
+  add(cart: Cart): void {
+    if (!this.userId) return;
 
-    const promise = this.items$.add(cart).then(docRefPromise => {
-      const newItem = { id: docRefPromise.id, ...cart };
-      var docRef = this.items$.doc(newItem.id);
-      docRef.set(newItem);
-      observer.next(newItem);
-    });
+    const path = `carts`;
+    console.info(`adding: `, path, cart);
 
-    return observer.asObservable();
+    this.afs.collection<Cart>(path).add(cart);
   }
 
-  update(cart: Cart): Observable<Cart> {
-    const id = cart.id;
-    var docRef = this.items$.doc(id);
-    docRef.set(cart);
+  update(cart: Cart) {
+    if (!this.userId) return of(null);
 
-    let o = docRef.snapshotChanges().map(doc => {
-      return doc.payload.data() as Cart;
-    });
-
-    return o;
+    const path = `carts/${cart.id}`;
+    const docRef = this.afs.doc<Cart>(path);
+    if (docRef) {
+      console.info(`updating: `, docRef, cart);
+      docRef.set(cart);
+    }
   }
 
-  delete(id: string): Observable<boolean> {
-    let docRef = this.items$.doc(id);
+  delete(cartId: string): void {
+    if (!this.userId) return;
 
-    const promise = docRef.delete().then(() => {
-      return true;
-    });
-
-    return fromPromise(promise);
+    const path = `carts/${cartId}`;
+    console.info(`deleting: `, path);
+    const docRef = this.afs.doc<Cart>(path).delete();
   }
 }

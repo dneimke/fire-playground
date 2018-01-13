@@ -3,10 +3,8 @@ import { Observable } from "rxjs/Observable";
 import { AngularFirestore, DocumentChangeAction } from "angularfire2/firestore";
 import { Cart, User } from "../models";
 import { of } from "rxjs/observable/of";
-import { fromPromise } from "rxjs/observable/fromPromise";
 import { ICollectionService } from "./ICollection.service";
 import { AngularFireAuth } from "angularfire2/auth";
-import { DocumentSnapshot } from "@firebase/firestore-types";
 import { Subject } from "rxjs/Subject";
 
 @Injectable()
@@ -41,10 +39,8 @@ export class NestedCollectionService implements ICollectionService<Cart> {
       .filter(e => e !== null);
   }
 
-  findAll(): Observable<Cart[]> {
-    if (!this.userId) return;
-
-    const path = `accounts/${this.userId}/carts`;
+  findByUser(userId: string): Observable<Cart[]> {
+    const path = `accounts/${userId}/carts`;
     console.info(`findAll`, path);
 
     return this.afs

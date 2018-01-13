@@ -21,28 +21,33 @@ export class NestedCollectionsComponent implements OnInit {
   ngOnInit(): void {
     this.authService.authState.subscribe(user => {
       if (user) {
-        this.carts$ = this.cartService.findAll();
+        console.log(user.uid);
+        this.carts$ = this.cartService.findByUser(user.uid);
       }
     });
   }
 
   onAddCart() {
     const name = prompt("Enter a name for your cart.");
-    const cart = { name } as Cart;
-    this.cartService.add(cart);
+    if (name && name.length > 0) {
+      const cart = { name } as Cart;
+      this.cartService.add(cart);
+    }
   }
 
   onSelect(cartId: string) {
     this.cartService.find(cartId).subscribe(c => {
-      console.info("selected", c);
       this.selectedCart = c;
     });
   }
 
   onEdit(cart: Cart) {
     const name = prompt("Update the name of your cart.", cart.name);
-    const updatedCart = { ...cart, name } as Cart;
-    this.cartService.update(updatedCart);
+
+    if (name && name.length > 0) {
+      const updatedCart = { ...cart, name } as Cart;
+      this.cartService.update(updatedCart);
+    }
   }
 
   onDelete(cart: Cart) {

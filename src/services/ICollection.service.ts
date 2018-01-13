@@ -3,7 +3,7 @@ import { Observable } from "rxjs/Observable";
 export interface ICollectionService<T> {
   find(id: string): Observable<T>;
 
-  findAll(): Observable<T[]>;
+  findByUser(userId: string): Observable<T[]>;
 
   add(item: T): void;
 
