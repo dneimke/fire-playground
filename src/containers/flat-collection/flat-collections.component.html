@@ -1,0 +1,36 @@
+<div *ngIf="user">
+    Hello {{user.name}}!
+</div>
+
+<div class="container">
+    <h3>Carts</h3>
+    <p class="bg-info" style="padding: 15px; width: 50%" *ngIf="!(carts$ | async)">
+        There are no items, click add to create one!
+    </p>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <ul class='list-unstyled'>
+                    <li *ngFor="let item of carts$ | async">
+                        <a (click)="onSelect(item.id)">
+                            <span class="badge">{{item.name}}</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-8">
+                <div class='card' *ngIf='selectedCart'>
+                    <h2>Selected Cart</h2>
+                    <p>{{(selectedCart)?.name}}</p>
+                    <button mat-raised-button color="primary" (click)="onEdit(selectedCart)">Edit</button>
+                    <button mat-raised-button color="warn" (click)="onDelete(selectedCart)">Delete</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <button mat-raised-button color="primary" (click)="onAddCart()" *ngIf="!(authService.user$ | async)?.uid">Add</button>
+</div>

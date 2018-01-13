@@ -1,26 +1,32 @@
 import { Component, OnInit } from "@angular/core";
-import { AngularFirestore } from "angularfire2/firestore";
+import {
+  AngularFirestore,
+  AngularFirestoreCollection,
+  AngularFirestoreDocument
+} from "angularfire2/firestore";
 import { Observable } from "rxjs/Observable";
 import { Cart } from "../../models";
-import { NestedCollectionService } from "../../services";
+import { FireCollectionService } from "../../services";
 import { User } from "@firebase/auth-types";
 import { AngularFireAuth } from "angularfire2/auth";
 import { of } from "rxjs/observable/of";
 
 @Component({
-  selector: "nested-collection",
-  templateUrl: "./nested-collections.component.html"
+  selector: "fire-collection",
+  templateUrl: "./fire-collections.component.html"
 })
-export class NestedCollectionsComponent implements OnInit {
+export class FireCollectionsComponent implements OnInit {
   carts$: Observable<Cart[]>;
   selectedCart: Cart;
+  userId: string;
 
-  constructor(private cartService: NestedCollectionService, private authService: AngularFireAuth) {}
+  constructor(private cartService: FireCollectionService, private authService: AngularFireAuth) {}
 
   ngOnInit(): void {
     this.authService.authState.subscribe(user => {
       if (user) {
         console.log(user.uid);
+        this.userId = user.uid;
         this.carts$ = this.cartService.findByUser(user.uid);
       }
     });
@@ -29,7 +35,7 @@ export class NestedCollectionsComponent implements OnInit {
   onAddCart() {
     const name = prompt("Enter a name for your cart.");
     if (name && name.length > 0) {
-      const cart = { name } as Cart;
+      const cart = { userId: this.userId, name } as Cart;
       this.cartService.add(cart);
     }
   }

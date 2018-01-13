@@ -1,6 +1,11 @@
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs/Observable";
-import { AngularFirestore, DocumentChangeAction } from "angularfire2/firestore";
+import {
+  AngularFirestore,
+  DocumentChangeAction,
+  AngularFirestoreDocument,
+  AngularFirestoreCollection
+} from "angularfire2/firestore";
 import { Cart, User } from "../models";
 import { of } from "rxjs/observable/of";
 import { ICollectionService } from "./ICollection.service";
@@ -8,7 +13,7 @@ import { AngularFireAuth } from "angularfire2/auth";
 import { Subject } from "rxjs/Subject";
 
 @Injectable()
-export class FlatCollectionService implements ICollectionService<Cart> {
+export class FireCollectionService implements ICollectionService<Cart> {
   constructor(private afs: AngularFirestore) {}
 
   find(id: string): Observable<Cart> {
@@ -16,7 +21,7 @@ export class FlatCollectionService implements ICollectionService<Cart> {
     console.info(`find: `, path);
 
     return this.afs
-      .doc(path)
+      .doc<Cart>(path)
       .snapshotChanges()
       .map((action: DocumentChangeAction) => {
         if (action.payload.exists) {
@@ -24,8 +29,7 @@ export class FlatCollectionService implements ICollectionService<Cart> {
           const id = action.payload.id;
           return { id, ...data };
         }
-      })
-      .filter(e => e !== null);
+      });
   }
 
   findByUser(userId: string): Observable<Cart[]> {
@@ -36,17 +40,15 @@ export class FlatCollectionService implements ICollectionService<Cart> {
       .collection<Cart>(path, ref => ref.where("userId", "==", userId))
       .snapshotChanges()
       .map((actions: DocumentChangeAction[]) => {
-        return actions
-          .map((action: DocumentChangeAction) => {
-            if (action.payload.doc.exists) {
-              const data = action.payload.doc.data() as Cart;
-              const id = action.payload.doc.id;
-              return { id, ...data };
-            } else {
-              console.info("skipping: ", action.payload.doc);
-            }
-          })
-          .filter(e => e !== null);
+        return actions.map((action: DocumentChangeAction) => {
+          if (action.payload.doc.exists) {
+            const data = action.payload.doc.data() as Cart;
+            const id = action.payload.doc.id;
+            return { id, ...data };
+          } else {
+            console.info("skipping: ", action.payload.doc);
+          }
+        });
       });
   }
 
@@ -54,7 +56,13 @@ export class FlatCollectionService implements ICollectionService<Cart> {
     const path = `carts`;
     console.info(`adding: `, path, cart);
 
-    this.afs.collection<Cart>(path).add(cart);
+    this.afs
+      .collection<Cart>(path)
+      .add(cart)
+      .then(ref => {
+        const newItem = { id: ref.id, ...cart };
+        ref.set(newItem);
+      });
   }
 
   update(cart: Cart) {
