@@ -39,7 +39,7 @@ export class FireCollectionService implements ICollectionService<Cart> {
 
   findByUser(userId: string): Observable<Cart[]> {
     this.userId = userId;
-    this.itemsCollection = this.afs.collection("carts", ref => ref.orderBy("name", "asc"));
+    this.itemsCollection = this.afs.collection("carts", ref => ref.where("userId", "==", userId));
 
     return (this.items = this.itemsCollection.snapshotChanges().map(changes => {
       return changes.map(a => {
