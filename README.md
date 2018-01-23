@@ -43,7 +43,7 @@ Please read the Getting Started article to learn how to get the code up and runn
   * has a Category
   * has many Tags
 
-## Technical Information
+## Angular CLI
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.5.2.
 

@@ -1,5 +1,5 @@
-import { HomeComponent } from "./home-component";
+import { CartViewComponent } from "./cart-view";
 
-export const containers: any[] = [HomeComponent];
+export const containers: any[] = [CartViewComponent];
 
-export * from "./home-component";
+export * from "./cart-view";

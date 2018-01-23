@@ -18,7 +18,7 @@ import * as fromComponents from "../components";
 // routes
 export const ROUTES: Routes = [
   { path: "", pathMatch: "full", redirectTo: "home" },
-  { path: "home", component: fromContainers.HomeComponent }
+  { path: "carts", component: fromContainers.CartViewComponent }
 ];
 
 @NgModule({

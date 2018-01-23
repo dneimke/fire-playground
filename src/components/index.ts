@@ -1,7 +1,7 @@
-import { CartEditorComponent } from "./cart-editor";
 import { SelectedCartComponent } from "./selected-cart";
+import { UserCartsComponent } from "./user-carts";
 
-export const components: any[] = [CartEditorComponent, SelectedCartComponent];
+export const components: any[] = [SelectedCartComponent, UserCartsComponent];
 
-export * from "./cart-editor";
 export * from "./selected-cart";
+export * from "./user-carts";
