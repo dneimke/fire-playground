@@ -7,31 +7,7 @@ import { AngularFireAuth } from "angularfire2/auth";
 
 @Component({
   selector: "cart-view",
-  template: `
-    <div *ngIf="user">
-        Hello {{user.displayName}}!
-    </div>
-
-    <div class="container">
-        <h3>Carts</h3>
-        <p class="bg-info" style="padding: 15px; width: 50%" *ngIf="!(carts)">
-            There are no items, click add to create one!
-        </p>
-
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    <user-carts *ngIf='carts' [carts]='carts' (select)='onSelectCart($event)'></user-carts>
-                </div>
-                <div class="col-md-8">
-                    <selected-cart *ngIf='selectedCart' [cart]='selectedCart' (cancel)='onCancel()' (edit)='onEditCart($event)' (delete)='onDeleteCart($event)'></selected-cart>
-                </div>
-            </div>
-        </div>
-
-        <button mat-raised-button color="primary" (click)="onAddCart()" *ngIf="user">Add</button>
-    </div>
-    `,
+  templateUrl: "./cart-view.component.html",
   styles: []
 })
 export class CartViewComponent implements OnInit {
@@ -56,8 +32,8 @@ export class CartViewComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
-    if (this.cartSubscription) {
-      this.cartSubscription.unsubscribe;
+    if (this.carts) {
+      this.cartSubscription.unsubscribe();
     }
   }
 

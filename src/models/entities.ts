@@ -1,25 +1,25 @@
 import { IBaseEntity } from "./base-entity";
 
-export class Cart implements IBaseEntity {
+export class BaseEntity implements IBaseEntity {
   id: string;
   name: string;
+}
+
+export class Cart extends BaseEntity {
   userId: string;
-  items: { [key: string]: Item[] }; // items are grouped by category
+  items: { [key: string]: PurchasedProduct[] }; // items are grouped by category
 }
 
-export class Item {
-  name: string;
-  type: string;
+export class Category extends BaseEntity {}
+
+export class Product extends BaseEntity {
   categoryId?: string;
-  tags?: Tag[];
+  unitPrice: number;
 }
 
-export class Category {
-  id: string;
-  name: string;
-}
+export class Tag extends BaseEntity {}
 
-export class Tag {
-  id: string;
-  name: string;
+export class PurchasedProduct extends Product {
+  quantity: number;
+  totalPrice: number;
 }

@@ -6,3 +6,8 @@ body {
   margin-left: 0px;
   margin-right: 0px;
 }
+
+.alert {
+  padding: 8px;
+  margin: 6px;
+}

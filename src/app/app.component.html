@@ -31,16 +31,30 @@
 
     <div class="col-xs-12 col-sm-9">
       <router-outlet></router-outlet>
+
+      <div *ngIf="!(authService.user$ | async)?.uid" class="alert alert-info" role="alert">
+        Please login to get started
+      </div>
     </div>
 
-    <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar">
 
+
+    <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar" *ngIf="(authService.user$ | async)?.uid">
+      <h3>Shopping Experience</h3>
       <mat-list role="list">
         <mat-list-item role="listitem">
-          <a [routerLink]="['/carts']">Carts</a>
+          <a [routerLink]="['/carts']">User Carts</a>
+        </mat-list-item>
+
+      </mat-list>
+
+      <h3>Store Management</h3>
+      <mat-list role="list">
+        <mat-list-item role="listitem">
+          <a [routerLink]="['/categories']">Categories</a>
         </mat-list-item>
         <mat-list-item role="listitem">
-          <a [routerLink]="['/groups']">Groups</a>
+          <a [routerLink]="['/products']">Products</a>
         </mat-list-item>
       </mat-list>
 

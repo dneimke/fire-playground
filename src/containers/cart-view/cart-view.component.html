@@ -1,0 +1,29 @@
+<div *ngIf="user">
+    Hello {{user.displayName}}!
+</div>
+
+<div class="container">
+    <h3>Carts</h3>
+
+    <p>
+        Create Carts so that you can add products to them while you shop.
+    </p>
+
+    <p class="bg-info" style="padding: 15px; width: 50%" *ngIf="!(carts)">
+        Click add to create your first Cart!
+    </p>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <item-list *ngIf='carts' [items]='carts' (select)='onSelectCart($event)'></item-list>
+            </div>
+            <div class="col-md-8">
+                <item-editor *ngIf='selectedCart' [item]='selectedCart' (cancel)='onCancel()' (edit)='onEditCart($event)' (delete)='onDeleteCart($event)'>
+                </item-editor>
+            </div>
+        </div>
+    </div>
+
+    <button mat-raised-button color="primary" (click)="onAddCart()" *ngIf="user">Add</button>
+</div>

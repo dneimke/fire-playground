@@ -1,0 +1,28 @@
+<div *ngIf="user">
+    Hello {{user.displayName}}!
+</div>
+
+<div class="container">
+    <h3>Categories</h3>
+
+    <p>
+        Create Products and add them to Categories based on their purpose. For example, Drinks, Spreads, Cereals, etc.
+    </p>
+
+    <p class="bg-info" style="padding: 15px; width: 50%" *ngIf="!(products)">
+        There are currently no products, click add to create one!
+    </p>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <item-list *ngIf='products' [items]='products' (select)='onSelectProduct($event)'></item-list>
+            </div>
+            <div class="col-md-8">
+                <item-editor *ngIf='selectedProduct' [item]='selectedProduct' (cancel)='onCancel()' (edit)='onEditProduct($event)' (delete)='onDeleteCategory($event)'></item-editor>
+            </div>
+        </div>
+    </div>
+
+    <button mat-raised-button color="primary" (click)="onAddProduct()" *ngIf="user">Add</button>
+</div>
