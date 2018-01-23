@@ -6,7 +6,7 @@ As I developed features in my application, I stumbled a lot and had trouble mapp
 
 I decided to create this repo of working code to provide examples of how to use AngularFirebase in an Angular application which talks to the Firebase Firestore.
 
-You can see the application running via the following url: ...
+[Click here](https://fire-playground-1d37c.firebaseapp.com/) to see the application running live.
 
 Please read the Getting Started article to learn how to get the code up and running in your own environment.
 
