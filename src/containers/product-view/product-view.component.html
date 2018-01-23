@@ -19,7 +19,7 @@
                 <item-list *ngIf='products' [items]='products' (select)='onSelectProduct($event)'></item-list>
             </div>
             <div class="col-md-8">
-                <item-editor *ngIf='selectedProduct' [item]='selectedProduct' (cancel)='onCancel()' (edit)='onEditProduct($event)' (delete)='onDeleteCategory($event)'></item-editor>
+                <item-editor *ngIf='selectedProduct' [item]='selectedProduct' (cancel)='onCancel()' (edit)='onEditProduct($event)' (delete)='onDeleteProduct($event)'></item-editor>
             </div>
         </div>
     </div>
