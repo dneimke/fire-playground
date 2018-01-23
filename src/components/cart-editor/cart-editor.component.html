@@ -20,17 +20,10 @@
                 </ul>
             </div>
             <div class="col-md-8">
-                <div class='card' *ngIf='selectedCart'>
-                    <h2>Selected Cart</h2>
-                    <pre>{{selectedCart | json}}</pre>
-                    <button mat-raised-button color="primary" (click)="onEdit(selectedCart)">Edit</button>
-                    <button mat-raised-button color="warn" (click)="onDelete(selectedCart)">Delete</button>
-                </div>
-
+                <selected-cart *ngIf='selectedCart' [cart]='selectedCart' (cancel)='onCancel()' (edit)='onEditCart($event)' (delete)='onDeleteCart($event)'></selected-cart>
             </div>
         </div>
     </div>
-
 
     <button mat-raised-button color="primary" (click)="onAddCart()" *ngIf="user">Add</button>
 </div>

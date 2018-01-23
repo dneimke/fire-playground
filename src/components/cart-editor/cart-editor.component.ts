@@ -41,6 +41,10 @@ export class CartEditorComponent implements OnInit {
     this.selectedCart = cart;
   }
 
+  onCancel() {
+    this.selectedCart = undefined;
+  }
+
   onEdit(cart: Cart) {
     const name = prompt("Update the name of your cart.", cart.name);
 
