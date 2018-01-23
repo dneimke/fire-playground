@@ -13,14 +13,12 @@ import { AppMaterialModule } from "../modules/app-material.module";
 
 import * as fromServices from "../services";
 import * as fromContainers from "../containers";
+import * as fromComponents from "../components";
 
 // routes
 export const ROUTES: Routes = [
   { path: "", pathMatch: "full", redirectTo: "home" },
-  { path: "home", component: fromContainers.HomeComponent },
-  { path: "nested", component: fromContainers.NestedCollectionsComponent },
-  { path: "flat", component: fromContainers.FlatCollectionsComponent },
-  { path: "fire", component: fromContainers.FireCollectionsComponent }
+  { path: "home", component: fromContainers.HomeComponent }
 ];
 
 @NgModule({
@@ -33,7 +31,7 @@ export const ROUTES: Routes = [
     AppMaterialModule,
     RouterModule.forRoot(ROUTES)
   ],
-  declarations: [AppComponent, fromContainers.containers],
+  declarations: [AppComponent, fromContainers.containers, fromComponents.components],
   providers: [fromServices.services],
   bootstrap: [AppComponent]
 })

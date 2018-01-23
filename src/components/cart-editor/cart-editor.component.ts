@@ -1,27 +1,30 @@
 import { Component, OnInit } from "@angular/core";
-import { AngularFirestore } from "angularfire2/firestore";
 import { Observable } from "rxjs/Observable";
-import { Cart } from "../../models";
-import { NestedCollectionService } from "../../services";
+import { Cart, Item } from "../../models";
+import { CartService } from "../../services";
 import { User } from "@firebase/auth-types";
 import { AngularFireAuth } from "angularfire2/auth";
-import { of } from "rxjs/observable/of";
 
 @Component({
-  selector: "nested-collection",
-  templateUrl: "./nested-collections.component.html"
+  selector: "cart-editor",
+  templateUrl: "./cart-editor.component.html"
 })
-export class NestedCollectionsComponent implements OnInit {
-  carts$: Observable<Cart[]>;
+export class CartEditorComponent implements OnInit {
+  carts: Cart[];
   selectedCart: Cart;
+  user: Observable<User>;
+  userId: string;
 
-  constructor(private cartService: NestedCollectionService, private authService: AngularFireAuth) {}
+  constructor(private cartService: CartService, private afAuth: AngularFireAuth) {}
 
   ngOnInit(): void {
-    this.authService.authState.subscribe(user => {
+    this.afAuth.authState.subscribe(user => {
       if (user) {
-        console.log(user.uid);
-        this.carts$ = this.cartService.findByUser(user.uid);
+        this.user = user;
+        this.userId = user.uid;
+        this.cartService.getForUser(user.uid).subscribe(carts => {
+          this.carts = carts;
+        });
       }
     });
   }
@@ -29,15 +32,13 @@ export class NestedCollectionsComponent implements OnInit {
   onAddCart() {
     const name = prompt("Enter a name for your cart.");
     if (name && name.length > 0) {
-      const cart = { name } as Cart;
+      const cart = { userId: this.userId, name } as Cart;
       this.cartService.add(cart);
     }
   }
 
-  onSelect(cartId: string) {
-    this.cartService.find(cartId).subscribe(c => {
-      this.selectedCart = c;
-    });
+  onSelect(cart: Cart) {
+    this.selectedCart = cart;
   }
 
   onEdit(cart: Cart) {
@@ -46,6 +47,7 @@ export class NestedCollectionsComponent implements OnInit {
     if (name && name.length > 0) {
       const updatedCart = { ...cart, name } as Cart;
       this.cartService.update(updatedCart);
+      this.selectedCart = undefined;
     }
   }
 
@@ -54,6 +56,7 @@ export class NestedCollectionsComponent implements OnInit {
     const confirmed = confirm("Are you sure you want to delete this record?");
     if (confirmed) {
       this.cartService.delete(cart.id);
+      this.selectedCart = undefined;
     }
   }
 }

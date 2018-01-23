@@ -32,5 +32,5 @@
     </div>
 
 
-    <button mat-raised-button color="primary" (click)="onAddCart()" *ngIf="!(authService.user$ | async)?.uid">Add</button>
+    <button mat-raised-button color="primary" (click)="onAddCart()" *ngIf="user">Add</button>
 </div>
