@@ -1,4 +1,4 @@
 export interface IBaseEntity {
-  id: string;
+  id?: string;
   name: string;
 }

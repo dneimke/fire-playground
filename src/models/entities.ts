@@ -1,7 +1,7 @@
 import { IBaseEntity } from "./base-entity";
 
 export class BaseEntity implements IBaseEntity {
-  id: string;
+  id?: string;
   name: string;
 }
 

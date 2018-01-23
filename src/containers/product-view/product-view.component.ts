@@ -40,7 +40,7 @@ export class ProductViewComponent implements OnInit {
   onAddProduct() {
     const name = prompt("Enter a name for your product.");
     if (name && name.length > 0) {
-      const product = { id: undefined, userId: this.userId, name, unitPrice: 0 } as Product;
+      const product = { userId: this.userId, name, unitPrice: 0 } as Product;
       this.productService.add(product);
     }
   }

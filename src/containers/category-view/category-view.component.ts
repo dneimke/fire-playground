@@ -40,7 +40,7 @@ export class CategoryViewComponent implements OnInit {
   onAddCategory() {
     const name = prompt("Enter a name for your category.");
     if (name && name.length > 0) {
-      const category = { id: undefined, userId: this.userId, name } as Category;
+      const category = { userId: this.userId, name } as Category;
       this.categoryService.add(category);
     }
   }
