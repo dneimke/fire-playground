@@ -14,11 +14,10 @@ export class CartService extends BaseService<Cart> {
   // Custom Methods
 
   getForUser(userId: string): Observable<Cart[]> {
-    console.info("[Match Service] getForUser: ", userId);
+    console.info("[CartService] getForUser: ", userId);
     let coll = this.afs.collection(this.uri, ref => ref.where("userId", "==", userId));
 
     return coll.snapshotChanges().map(changes => {
-      console.info(changes);
       return changes.map(a => {
         const data = a.payload.doc.data() as Cart;
         data.id = a.payload.doc.id;
